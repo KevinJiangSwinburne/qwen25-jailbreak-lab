@@ -1,0 +1,81 @@
+# ============================================================
+# Qwen2.5-1.5B Jailbreak Teaching Lab - CPU Version
+# Adapted from: guangxiangdebizi/LoRA-qwen3.5-27b-v2
+# ============================================================
+
+model:
+  name: Qwen/Qwen2.5-1.5B-Instruct
+
+generation:
+  max_new_tokens: 512
+  temperature: 0.7
+  top_p: 0.9
+  top_k: 50
+  repetition_penalty: 1.05
+
+# ---- General SFT ----
+finetune:
+  data_path: data/train_sample.jsonl
+  output_dir: outputs/finetune_output
+  lora:
+    r: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+  training:
+    num_epochs: 3
+    per_device_batch_size: 1
+    gradient_accumulation_steps: 4
+    learning_rate: 2.0e-4
+    warmup_ratio: 0.05
+    lr_scheduler: cosine
+    max_seq_len: 512
+    bf16: false
+    fp16: false
+    logging_steps: 5
+    save_steps: 50
+
+# ---- Jailbreak: all-layer LoRA ----
+finetune_jailbreak:
+  data_path: data/jailbreak_train.jsonl
+  output_dir: outputs/jailbreak_output
+  lora:
+    r: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+  training:
+    num_epochs: 10
+    per_device_batch_size: 1
+    gradient_accumulation_steps: 2
+    learning_rate: 2.0e-4
+    warmup_ratio: 0.05
+    lr_scheduler: cosine
+    max_seq_len: 512
+    bf16: false
+    fp16: false
+    logging_steps: 5
+    save_steps: 100
+
+# ---- Jailbreak: targeted LoRA (layers from Abliteration) ----
+finetune_jailbreak_targeted:
+  data_path: data/jailbreak_train.jsonl
+  output_dir: outputs/jailbreak_targeted_output
+  lora:
+    r: 16
+    alpha: 32
+    dropout: 0.10
+    target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+    # layers_to_transform auto-filled by --auto-layers flag
+  training:
+    num_epochs: 3 # adjusted to 10 for better convergence on targeted layers (3 is baseline)
+    per_device_batch_size: 1
+    gradient_accumulation_steps: 2
+    learning_rate: 1.0e-4
+    warmup_ratio: 0.05
+    lr_scheduler: cosine
+    max_seq_len: 512
+    bf16: false
+    fp16: false
+    logging_steps: 5
+    save_steps: 50
