@@ -101,7 +101,7 @@ Each step is a single command. See [Running the experiment](#running-the-experim
 ### Install
 
 ```bash
-git clone https://github.com/<your-username>/qwen25-jailbreak-lab.git
+git clone https://github.com/KevinJiangSwinburne/qwen25-jailbreak-lab.git
 cd qwen25-jailbreak-lab
 
 # Virtual environment
