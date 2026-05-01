@@ -176,7 +176,6 @@ def run_finetune(cfg: dict, profile_name: str):
         dataset_text_field="text",
         report_to="none",
         packing=False,
-        no_cuda=True,
         use_cpu=True,
         dataloader_pin_memory=False,
     )
